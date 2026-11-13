@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>水位日志 UTC 对齐工具 · Europe/Berlin</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>水位日志 UTC 对齐工具</h1>
+  <p>站点时区固定 <b>Europe/Berlin</b>。把旧日志的本地时刻对齐到 UTC 雷达降雨：
+     不默认选择夏令时、不重排记录，逐行列出满足“真实时刻严格递增”的全部候选，
+     只有所有行都有唯一解释时才允许导出。</p>
+</header>
+
+<div id="layout">
+  <aside>
+    <section class="card">
+      <h2>上传 CSV</h2>
+      <p class="hint">格式：<code>序号,本地时刻,水位</code>（表头可用中英文名），
+        最多 5000 行。时刻可带 UTC 偏移作锚点，如
+        <code>2023-10-29 02:30+02:00</code>。</p>
+      <input type="file" id="fileInput" accept=".csv,text/csv">
+      <div id="uploadMsg" class="msg"></div>
+    </section>
+
+    <section class="card">
+      <h2>样例</h2>
+      <div class="samples">
+        <button data-sample="ambiguous_fallback.csv">歧义（秋季回拨）</button>
+        <button data-sample="anchored_fallback.csv">回拨 + 锚点</button>
+        <button data-sample="contradiction.csv">矛盾（不可导出）</button>
+        <button data-sample="clean_summer.csv">普通（直接可导出）</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>已上传文件</h2>
+      <ul id="fileList" class="file-list"></ul>
+    </section>
+  </aside>
+
+  <main>
+    <div id="empty" class="card muted">请上传 CSV 或点击左侧样例。</div>
+    <div id="detail" hidden>
+      <section class="card">
+        <div id="summary"></div>
+        <div id="problems"></div>
+        <div class="actions">
+          <button id="exportBtn">下载 UTC CSV</button>
+          <button id="originalBtn" class="secondary">下载原件</button>
+          <button id="deleteBtn" class="danger">删除此文件</button>
+        </div>
+        <div id="actionMsg" class="msg"></div>
+      </section>
+      <section class="card">
+        <table id="rowsTable">
+          <thead>
+            <tr>
+              <th>行</th><th>序号</th><th>本地时刻</th><th>水位</th>
+              <th>状态</th><th>UTC 候选（选择其一以消歧）</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
